@@ -26,7 +26,7 @@
 
                                 <div class="col-4 mb-3">
                                     <label class="text-label">CNPJ</label>	
-                                    <input type="text" name="cnpj" id="cnpj" value="<?php echo isset($emitente->cnpj) ? $emitente->cnpj : null ?>"  class="form-campo mascara-cnpj">
+                                    <input type="text" name="cnpj" id="cnpj"  value="<?php echo isset($emitente->cnpj) ? $emitente->cnpj : null ?>"  class="form-campo mascara-cnpj">
                                 </div> 
 
                                 <div class="col-4 mb-3">
@@ -40,7 +40,7 @@
 
                                 <div class="col-2 mb-3">
                                     <label class="text-label">Fone:</label>	
-                                    <input type="text" name="fone" value="<?php echo isset($emitente->fone) ? $emitente->fone : null ?>" placeholder="Digite aqui..." class="form-campo">
+                                    <input type="text" name="fone" value="<?php echo isset($emitente->fone) ? $emitente->fone : null ?>" placeholder="Digite aqui..." class="form-campo mascara-fone">
                                 </div>
                                 <div class="col-2 mb-3">
                                     <label class="text-label">Celular:</label>	
@@ -118,3 +118,19 @@
 	</div>
     </div>	
 </div>
+
+
+<script>
+    function buscarCNPJ(){
+        var cnpj = $("#cnpj").val();
+        $.ajax({
+            url:base_url + "emitente/buscarCNPJ/"+cnpj,
+            type:"GET",
+            dataType: "json",
+            data:{},
+            sucesso:function(data){
+                console.log(data);
+            }
+        });
+    }
+</script>

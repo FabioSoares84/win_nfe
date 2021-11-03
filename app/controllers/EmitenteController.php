@@ -4,6 +4,7 @@ namespace app\controllers;
 use app\core\Controller;
 use app\core\Flash;
 use app\models\service\EmitenteService;
+use app\models\service\Service;
 
 class EmitenteController extends Controller{
    private $tabela = "emitente";
@@ -38,15 +39,15 @@ class EmitenteController extends Controller{
         $emitente->id_emitente         = ($_POST["id_emitente"]) ? $_POST["id_emitente"] : null ; 
         $emitente->razao_social        = $_POST["razao_social"];   //xNome
         $emitente->nome_fantasia       = $_POST["nome_fantasia"];  //xFant
-        $emitente->cnpj                = $_POST["cnpj"];           //CNPJ
-        $emitente->ie                  = $_POST["ie"];             //IE
+        $emitente->cnpj                = tira_mascara($_POST["cnpj"]);           //CNPJ
+        $emitente->ie                  = tira_mascara($_POST["ie"]);             //IE
         $emitente->im                  = $_POST["im"];             //IM
         $emitente->iest                = $_POST["iest"];           //IEST
-        $emitente->fone                = $_POST["fone"];  //
+        $emitente->fone                = tira_mascara($_POST["fone"]);  //
         $emitente->email               = $_POST["email"];
         $emitente->email_contabilidade = $_POST["email_contabilidade"];
         
-        $emitente->cep                 = $_POST["cep"];        //CEP
+        $emitente->cep                 = tira_mascara($_POST["cep"]);        //CEP
         $emitente->logradouro          = $_POST["logradouro"]; //xLgr
         $emitente->numero              = $_POST["numero"];     //Nro
         $emitente->bairro              = $_POST["bairro"];
@@ -76,6 +77,10 @@ class EmitenteController extends Controller{
         $this->redirect(URL_BASE."emitente");
     }
     
+    public function buscarCNPJ($cnpj){
+        $retorno = enviarGetCurl("http://receitaws.com.br/v1/cnpj/".$cnpj);
+        i($retorno);
+    }
     
     
 }

@@ -3,7 +3,7 @@
 	<div class="caixa-titulo py-1 d-flex justify-content-space-between">
             <span class="h5  pt-1 mb-0 d-inline-block"><i class="far fa-list-alt"></i> Lista de emitente</span>
             <div>
-                <a href="javascript:;" onclick="abrirModal('#janela1')" class="btn btn-verde  d-inline-block"><i class="fas fa-plus-circle mb-0"></i> Adicionar novo</a>
+                <a href="<?php echo URL_BASE ."emitente/create"?>" class="btn btn-verde  d-inline-block"></i> Adicionar novo</a>
                 <a href="" class="btn btn-amarelo filtro mx-1 d-inline-block"><i class="fas fa-filter"></i> Filtrar</a>
             </div>
         </div>

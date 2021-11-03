@@ -1,16 +1,16 @@
 <div class="conteudo-fluido">
-		<div class="rows">	
-			<div class="col-12">
-				<div class="caixa">
-					<div class="caixa-titulo py-1 d-inline-block width-100">
-							<span class="h5  pt-1 mb-0 d-inline-block"><i class="far fa-list-alt"></i> Inserir contato</span>
-							<a href="lst_contato.html" class="btn btn-amarelo float-right"><i class="fas fa-arrow-left mb-0"></i> Voltar</a>
-					</div>
-					<?php 
-                       $this->verErro();
-                       $this->verMsg();
-                       ?>
-					<form action="<?php echo URL_BASE ."cliente/salvar"?>" method="POST">
+    <div class="rows">	
+	<div class="col-12">
+	    <div class="caixa">
+                <div class="caixa-titulo py-1 d-inline-block width-100">
+                    <span class="h5  pt-1 mb-0 d-inline-block"><i class="far fa-list-alt"></i> Inserir contato</span>
+                    <a href="<?php echo URL_BASE . "cliente" ?>" class="btn btn-amarelo float-right"><i class="fas fa-arrow-left mb-0"></i> Voltar</a>
+		</div>
+		<?php 
+                   $this->verErro();
+                   $this->verMsg();
+                ?>
+		<form action="<?php echo URL_BASE ."cliente/salvar"?>" method="POST">
 						<div class="p-5 pb-0 pt-4 width-100 float-left">
 						<div id="tab">
 							<ul class="tabs">
@@ -135,15 +135,14 @@
 								 </div>
 						 </div>
 						</div>
-						<!--Botao-->
-						<div class="mb-5 mt-4 width-100 d-inline-block" style="clear:both">
-								<input type="hidden" name="id_cliente" value="<?php echo isset($cliente->id_cliente) ? $cliente->id_cliente : null ?>">
-								<input type="submit" value="Salvar" class="btn btn-azul btn-grande d-block m-auto">
-						 </div>
-							
-						</div>
-						</form>
-				</div>
-			</div>
-		</div>
+                        <!--Botao-->
+                        <div class="mb-5 mt-4 width-100 d-inline-block" style="clear:both">
+                            <input type="hidden" name="id_cliente" value="<?php echo isset($cliente->id_cliente) ? $cliente->id_cliente : null ?>">
+                            <input type="submit" value="Salvar" class="btn btn-azul btn-grande d-block m-auto">
+                        </div>
+                    </div>
+		</form>
+            </div>
 	</div>
+    </div>
+</div>

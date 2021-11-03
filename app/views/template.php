@@ -7,7 +7,7 @@
         <!--css-->
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/js/datatables/css/jquery.dataTables.min.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/js/datatables/css/responsive.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo URL_BASE ?>assets/js/datatables/css/style_dataTable.css">
+        <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/js/datatables/css/style_dataTable.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/auxiliar.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/grade.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/style.css">	
