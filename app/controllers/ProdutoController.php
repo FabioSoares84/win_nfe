@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\core\Controller;
+use app\core\Flash;
 use app\models\service\Service;
 use app\models\service\ProdutoService;
 
