@@ -4,6 +4,7 @@ namespace app\controllers;
 use app\core\Controller;
 use app\core\Flash;
 use app\models\service\Service;
+use app\models\service\ClienteService;
 
 class ClienteController extends Controller{
    private $tabela = "cliente";
@@ -36,17 +37,13 @@ class ClienteController extends Controller{
         $cliente = new \stdClass();
         
         $cliente->id_cliente          = ($_POST["id_cliente"]) ? $_POST["id_cliente"] : null ; 
-        $cliente->nome                = $_POST["razao_social"];   //xNome
-        $cliente->nome_fantasia       = $_POST["nome_fantasia"];  //xFant
-        $cliente->cpf                 = $_POST["cnpj"];           //CNPJ
+        $cliente->nome                = $_POST["nome"];   
+        $cliente->nome_fantasia       = $_POST["nome_fantasia"];  
+        $cliente->cpf                 = $_POST["cnpj"];           
         $cliente->cnpj                = $_POST["ie"];   
-        $cliente->fone                = $_POST["fone"];  ////IE
-        $cliente->celular             = $_POST["fone"];  //
-        $cliente->im                  = $_POST["im"];             //IM
-        $cliente->iest                = $_POST["iest"];           //IEST
-      
+        $cliente->fone                = $_POST["fone"];  
+        $cliente->celular             = $_POST["fone"];  
         $cliente->email               = $_POST["email"];
-        $cliente->email_contabilidade = $_POST["email_contabilidade"];
         
         $cliente->cep                 = $_POST["cep"];        //CEP
         $cliente->logradouro          = $_POST["logradouro"]; //xLgr
@@ -55,20 +52,25 @@ class ClienteController extends Controller{
         $cliente->complemento         = $_POST["complemento"];  //xCpl 
         $cliente->uf                  = $_POST["uf"];
         $cliente->cidade              = $_POST["cidade"];
-        $cliente->ibge                  = $_POST["ibge"];
-        $cliente->cnae                = $_POST["cnae"];           //CNAE
-        $cliente->crt                 = $_POST["crt"];            //CRT
         
-        $emitente->data_cadastro  = date("Y-m-d");
+        $cliente->ie                = $_POST["ie"];           
+        $cliente->im                  = $_POST["im"];             
+        $cliente->rg                = $_POST["rg"];           
+      
+        $cliente->suframa           = $_POST["suframa"];
+        $cliente->ie_subt_trib      = $_POST["ie_subt_trib"];
+        $cliente->ibge                  = $_POST["ibge"];
+        
+        $cliente->data_cadastro  = date("Y-m-d");
 
-        Flash::setForm($emitente);
-        if(EmitenteService::salvar($emitente, $this->campo, $this->tabela)){
-            $this->redirect(URL_BASE."emitente");
+        Flash::setForm($cliente);
+        if(ClienteService::salvar($cliente, $this->campo, $this->tabela)){
+            $this->redirect(URL_BASE."cliente");
         }else{
-            if(!$emitente->id_cliente){
-                $this->redirect(URL_BASE."emitente/create");
+            if(!$cliente->id_cliente){
+                $this->redirect(URL_BASE."cliente/create");
             }else{
-                $this->redirect(URL_BASE."emitente/edit/".$emitente->id_emitente);
+                $this->redirect(URL_BASE."cliente/edit/".$cliente->id_cliente);
             }
         }
     }

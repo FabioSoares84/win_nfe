@@ -4,7 +4,7 @@
 				<div class="caixa">
 					<div class="caixa-titulo py-1 d-inline-block width-100">
 						<span class="h5  pt-1 mb-0 d-inline-block"><i class="far fa-list-alt"></i> CADASTRAR NOVO PRODUTO</span>
-						<a href="lst_Nfeproduto.html" class="btn btn-amarelo float-right"><i class="fas fa-arrow-left mb-0"></i> Voltar</a>
+						<a href="<?php echo URL_BASE."produto" ?>" class="btn btn-amarelo float-right"><i class="fas fa-arrow-left mb-0"></i> Voltar</a>
 					</div>
 					<?php 
                        $this->verErro();
