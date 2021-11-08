@@ -3,6 +3,7 @@ namespace app\controllers;
 
 use app\core\Controller;
 use app\models\service\Service;
+use app\models\service\NotaFiscalService;
 
 class NotafiscalController extends Controller{
    private $tabela = "nfe";
@@ -24,16 +25,15 @@ class NotafiscalController extends Controller{
         $dados["view"]          = "NotaFiscal/Edit";
         $this->load("template", $dados);
     }
-    
-     
-    
+
     public function excluir($id){
         Service::excluir($this->tabela, $this->campo, $id);
         $this->redirect(URL_BASE."emitente");
     }
     
-   
-    
-    
+    public function salvarNota($id_venda){
+         NotaFiscalService::salvarNota($id_venda);
+    }
+
 }
 

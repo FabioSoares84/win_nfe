@@ -65,7 +65,11 @@
                                         <td align="center"><?php echo $venda->hora_venda ?></td>	
                                         <td align="center"><?php echo $venda->total ?></td>										
                                         <td align="center">
+                                        <?php if($venda->finalizada=="S"){ ?>
+                                            <a href="<?php echo URL_BASE ."notafiscal/salvarNota/". $venda->id_venda ?>" class="d-inline-block btn btn-outline-roxo btn-pequeno"><i class="fas fa-edit"></i> Emitir NFe</a>
+                                        <?php } else { ?>   
                                             <a href="<?php echo URL_BASE ."venda/edit/". $venda->id_venda ?>" class="d-inline-block btn btn-outline-roxo btn-pequeno"><i class="fas fa-edit"></i> Editar</a>
+                                        <?php } ?>    
                                             <a href="index.htmlcontato/create" class="d-inline-block btn btn-outline-vermelho btn-pequeno"><i class="fas fa-trash-alt"></i> Excluir</a>
                                         </td>
                                     </tr>

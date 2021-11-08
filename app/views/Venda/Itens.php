@@ -18,23 +18,23 @@
                                 <div class="col-6 position-relative border-right">
                                     <div class="p-1 pb-2">
                                         <label class="text-label"><i class="fas fa-user"></i> Cliente</label>
-                                        <span class="d-block text-branco h5 mb-0">Manoel Jailton</span>								  
+                                        <span class="d-block text-branco h5 mb-0"><?php echo $venda->nome ?></span>								  
                                     </div>
                                 </div>
 
                                 <div class="col-2 border-right">
                                     <label class="text-label"><i class="fas fa-calendar-alt"></i> Data</label>
-                                    <span class="d-block text-branco h5 mb-0">21/10/2021</span>
+                                    <span class="d-block text-branco h5 mb-0"><?php echo databr($venda->data_venda) ?>1</span>
                                 </div>
                                 
                                 <div class="col-2 border-right">
                                     <label class="text-label"><i class="fas fa-clock"></i> Hora</label>
-                                    <span class="d-block text-branco h5 mb-0">10:00</span>
+                                    <span class="d-block text-branco h5 mb-0"><?php echo $venda->hora_venda ?></span>
                                 </div>
                                 
                                 <div class="col-2">
                                     <label class="text-label"><i class="fas fa-dollar-sign"></i> Total</label>
-                                    <span class="d-block text-branco h5 mb-0">R$ 100</span>
+                                    <span class="d-block text-branco h5 mb-0"><?php echo $venda->total ?></span>
                                 </div>							
                             </div>
                         </div>
@@ -83,14 +83,16 @@
                                     </tr>
                                 </thead>
                                 <tbody id="lista_itens">
+                                <?php foreach ($itens as $item){ ?>
                                     <tr>
-                                        <td align="left">1</td>
-                                        <td align="left">Produto 01</td>
-                                        <td align="center">R$ 50</td>
-                                        <td align="center">2</td>							
-                                        <td align="center">R$ 100</td>
+                                        <td align="left"><?php echo $item->id_item_venda ?></td>
+                                        <td align="left"><?php echo $item->produto ?></td>
+                                        <td align="center">R$ <?php echo $item->valor ?></td>
+                                        <td align="center"><?php echo $item->qtde ?></td>							
+                                        <td align="center">R$<?php echo $item->subtotal ?></td>
                                         <td align="center"><a href="javascript:;" onclick="return excluir(this)" data-entidade ="itemvenda" data-id="<?php echo $item->id_item_venda ?>" class="fas fa-trash-alt text-vermelho"> Excluir</a> </td>
                                     </tr>
+                                <?php }?>    
                                </tbody>
                             </table>
                             <footer class="caixa-rodape text-right"> 

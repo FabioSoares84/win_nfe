@@ -28,7 +28,7 @@ class VendaController extends Controller{
         $this->load("template", $dados);
     }
     
-     public function salvar(){
+    public function salvar(){
         $venda = new \stdClass();  
         $venda->id_venda    = ($_POST["id_venda"]) ? $_POST["id_venda"] : null ; 
         $venda->data_venda  = $_POST["data_venda"];
@@ -47,14 +47,22 @@ class VendaController extends Controller{
         $this->load("template", $dados);
     }
     
-     
+    public function excluirItens($id_venda){
+        Service::excluir("item_venda", $this->campo, $id_venda);
+        VendaService::atualizarVenda($id_venda);
+        $this->redirect(URL_BASE."venda/edit/".$id_venda); 
+    }
     
     public function excluir($id){
         Service::excluir($this->tabela, $this->campo, $id);
         $this->redirect(URL_BASE."venda");
     }
     
-   
+     public function finalizar($id_venda){
+        $total = Service::getSoma("item_venda","subtotal","id_venda", $id_venda);
+        Service::editar(["finalizada"=>"S", "id_venda"=>$id_venda, "total"=>$total],"id_venda", $this->tabela);
+        $this->redirect(URL_BASE."venda"); 
+    }
     
     
 }

@@ -17,7 +17,7 @@ class VendaService{
     
     public static function atualizarVenda($id_venda){
         $total = Service::getSoma("item_venda","subtotal","id_venda",$id_venda);
-        Service::editar(["total"=>$total, "id_venda"=>id_venda], "id_venda", "venda");
+        Service::editar(["total"=>$total, "id_venda"=>$id_venda], "id_venda", "venda");
     }
 
 }

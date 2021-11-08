@@ -20,7 +20,6 @@
                     <li><a href="#menu_contato"><span>+</span>  Contato <i class="icon ihome fas fa-user-tag"></i></a></li>
                     <li><a href="#menu_produto"><span>+</span>  Produto <i class="icon ihome fas fa-cube"></i></a></li>
                     <li><a href="<?php echo URL_BASE ."venda"?>"><i class="icon fas fa-file-invoice-dollar"></i> Venda</a></li>
-
                     <li><a href="#menu_tributacao" rel="ativo"><span>+</span>  Tributação <i class="icon ihome fas fa-book"></i></a></li>
                     <li><a href="#menu_notas" rel="ativo"><span>+</span>  Notas <i class="icon ihome fas fa-file-contract"></i></a></li>					
                 </ul>
