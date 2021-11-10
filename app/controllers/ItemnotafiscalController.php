@@ -1,11 +1,17 @@
 <?php
 
-
 namespace app\controllers;
 
 use app\core\Controller;
-use app\models\service\Service;
+use app\models\dao\ItemNotaFiscalDao;
+
 
 class ItemnotafiscalController extends Controller {
-    //put your code here
+    
+    public static function existeItem($id_nfe, $id_produto){
+        $dao = new ItemNotaFiscalDao();
+        
+        return $dao->existeItem($id_nfe, $id_produto);
+        
+    }
 }

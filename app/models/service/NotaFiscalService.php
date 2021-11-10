@@ -2,6 +2,8 @@
 namespace app\models\service;
 
 use app\models\service\ItemVendaService;
+use app\controllers\ItemnotafiscalController;
+use app\models\dao\NotaFiscalDao;
 
 
 class NotaFiscalService{
@@ -62,9 +64,9 @@ class NotaFiscalService{
         $nota->em_IEST  = $empresa->iest;
         $nota->em_IM    = $empresa->im;
         $nota->em_CNAE  = $empresa->cnae;
-        $nota->em_CRT   = $empresa->regime_tributario;
+        $nota->em_CRT   = $empresa->crt;
         $nota->em_CNPJ     = $empresa->cnpj;
-        
+        //Endereço Emitente
         $nota->em_xLgr  = $empresa->logradouro;
         $nota->em_nro   = $empresa->numero;
         $nota->em_xCpl  = $empresa->complemento;
@@ -77,8 +79,6 @@ class NotaFiscalService{
         $nota->em_xPais   = "Brasil";
         $nota->em_fone    = $empresa->fone; 
         $nota->atualizacao= $empresa->ultima_atualizacao;
-        
-        
         
         $nfe = Service::get("nfe","id_venda" ,$id_venda);
         if(!$nfe){
@@ -94,12 +94,7 @@ class NotaFiscalService{
             }
             $id_nfe = $nfe->id_nfe;
         }
-        
-        if(!$id_nfe){
-            echo "Erro";
-            exit;
-        }
-        
+        //Dados Destinatario
         $dest = new \stdClass();
         $dest->id_nfe             = $id_nfe;
         $dest->dest_xNome         = $cliente->nome;
@@ -111,9 +106,7 @@ class NotaFiscalService{
         $dest->dest_CNPJ          = $cliente->cnpj;
         $dest->dest_CPF           = $cliente->cpf;
         $dest->dest_idEstrangeiro = $cliente->idEstrangeiro;
-        
-       
-       
+        //Endereço Destinatario
         $dest->dest_xLgr          = $cliente->logradouro;
         $dest->dest_nro           = $cliente->numero;
         $dest->dest_xCpl          = $cliente->complemento;
@@ -130,11 +123,81 @@ class NotaFiscalService{
         if(!$d){
             Service::inserir(objToArray($dest), "nfe_destinatario");
         }else{
-            $dest->id_destinatario = $d->id_destinarario;
-            Service::editar(objToArray($dest), "id_destinarario", "nfe_destinatario");
+            $dest->id_destinatario = $d->id_destinatario;
+            Service::editar(objToArray($dest), "id_destinatario", "nfe_destinatario");
         }
-    
+        
+        //Listando os Itens
+        $j = 0; 
+        $total = 0;
+        foreach ($itens as $i){
+           
+            $item = new \stdClass();
+            $item->id_nfe       = $id_nfe;
+            $item->numero_item  = $j++; //item da nota
+            $item->cProd        = $i->id_produto;
+            $item->cEAN         = $i->gtin;
+            $item->xProd        = $i->produto;
+            $item->NCM          = $i->ncm;
+            $item->cBenef       = $i->cbenef; //incluido no layout 4.00
+            
+            $item->EXTIPI      = $i->extipi;
+            $item->CFOP        = $i->cfop;
+            $item->uCom        = $i->abrev;
+            $item->qCom        = $i->qtde;
+            $item->vUnCom      = $i->valor;
+            $item->vProd       = $item->vUnCom * $item->qCom;
+            $item->cEANTrib    = $i->gtin;
+            $item->uTrib       = $i->abrev;
+            $item->qTrib       = $i->qtde;
+            $item->vUnTrib     = $i->valor;
+            $item->vFrete      = null;
+            $item->vSeg        = null;
+            $item->vDesc       = null;
+            $item->vOutro      = null;
+            $item->indTot      = 1;
+            $item->xPed        = $id_nfe;
+            $item->nItemPed    = $item->numero_item;
+            $item->nFCI        = $i->nfci;
+            
+            $total             += $item->vProd;
+            
+            $it = ItemnotafiscalController::existeItem($id_nfe, $i->id_produto);
+            if(!$it){
+                Service::inserir(objToArray($item), "nfe_item");
+            }else{
+                $item->id_nfe_item = $it->id_nfe_item;
+                Service::editar(objToArray($item), "id_nfe_item", "nfe_item");
+            }
+             
+        }
+        Service::editar(["id_nfe"=>$total, "Vliq"=>$total, "vProd"=>$total, "vProd"=>$total, "vNF"=>$total], "id_nfe", "nfe");
         
     }
+    
+    public static function lista(){
+        $dao = new NotaFiscalDao();
+        return $dao->lista();
+    }
+    
+    public static function getNotaFiscal($id_nfe){
+        $dao = new NotaFiscalDao();
+        $retorno = (object) array(
+            "nfe"          => $dao->getNotaFiscal($id_nfe),
+            "destinatario" => Service::get("nfe_destinatario", "id_nfe", $id_nfe),
+            "itens"        => Service::get("nfe_item", "id_nfe", $id_nfe, true),
+            "configuracao" => Service::get("configuracao", "id_configuracao",1)
+        );
+        return $retorno;
+    }
 
+    public static function getNotaEmDigitacao(){
+        $dao = new NotaFiscalDao();
+        return $dao->getNotaEmDigitacao();
+    }
+    
+    public static function salvarChave($id_nfe,$chave) {
+        $dao = new NotaFiscalDao();
+        return $dao->salvarChave($id_nfe, $chave);
+    }
 }

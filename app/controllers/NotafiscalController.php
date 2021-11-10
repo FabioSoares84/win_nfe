@@ -11,8 +11,9 @@ class NotafiscalController extends Controller{
   
    
     public function index(){
-       $dados["view"]  = "NotaFiscal/Index";
-       $this->load("template", $dados);
+        $dados["lista"] = NotaFiscalService::lista();
+        $dados["view"]  = "NotaFiscal/Index";
+        $this->load("template", $dados);
     }        
     
     public function create(){
