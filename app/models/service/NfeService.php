@@ -1,7 +1,9 @@
 <?php
 namespace app\models\service;
 
+use NFePHP\Common\Certificate;
 use NFePHP\NFe\Make;
+use NFePHP\NFe\Tools;
 use Exception;
 use app\models\service\NotaFiscalService;
 use app\models\service\XmlService;
@@ -64,6 +66,64 @@ class NfeService{
             i($nfe->getErrors());
         }
         return $retorno;
+    }
+    
+    public static function assinarXml($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        $retorno = new \stdClass();
+        try {
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+           
+            //Lendo o arquivo xml gerado
+            $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
+            $xml = "Notas/{$pastaAmbiente}/temporarias/{$notafiscal->nfe->chave}-nfe.xml";
+            $response = $tools->signNFe(file_get_contents($xml));
+            //Tranportar o arquivo assinado para a pasta assinada
+            $path_assinada = "Notas/{$pastaAmbiente}/assinadas/{$notafiscal->nfe->chave}-nfe.xml";
+            file_put_contents($path_assinada, $response);
+            chmod($path_assinada, 0777);
+            
+            NotaFiscalService::mudarStatus($notafiscal->nfe->id_nfe,4);
+            $retorno->erro = -1;
+            $retorno->msg = "XML Assinado com sucesso";
+            $retorno->msg_erro = ""; 
+           
+//            i($response);
+//            } catch (\Exception $e) {
+//            //aqui você trata possiveis exceptions
+//            echo "Foram encontrados erros na nota, procure o administrador";
+//            i($e->getMessage()) ;
+        } catch (\Exception $e){
+            $retorno->erro = 1;
+            $retorno->msg = "Erro ao Assinar XML";
+            $retorno->msg_erro = $e->getMessage(); 
+            // i($e->getMessage());
+        } 
+        return $retorno;
+//        i($configJson);
+//        $pfxcontent = file_get_contents('fixtures/expired_certificate.pfx');
+//
+//        $tools = new Tools($configJson, Certificate::readPfx($pfxcontent, 'associacao'));
+//        $tools->model('55');
     }
     
     public static function identifica($nfe,$identificacao){

@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/xampp/htdocs/win_nfe/app/controllers/NfeController.php</file>
+            <file>file:/C:/xampp/htdocs/win_nfe/Notas/homologacao/assinadas/50211126069390000220550010000002661503146132-nfe.xml</file>
             <file>file:/C:/xampp/htdocs/win_nfe/app/models/service/NotaFiscalService.php</file>
+            <file>file:/C:/xampp/htdocs/win_nfe/app/models/dao/NotaFiscalDao.php</file>
+            <file>file:/C:/xampp/htdocs/win_nfe/app/models/service/NfeService.php</file>
         </group>
     </open-files>
 </project-private>

@@ -58,8 +58,8 @@ class NotaFiscalService{
         $nota->modFrete = $configuracao->tipo_frete;
         
         //Dados Emitente
-        $nota->em_xNome = $empresa->razao_social;
-        $nota->em_xFant = $empresa->nome_fantasia;
+        $nota->em_xNome = $empresa->razao_social;  //TirarAcento
+        $nota->em_xFant = $empresa->nome_fantasia;  //Tirar Acento
         $nota->em_IE    = $empresa->ie;
         $nota->em_IEST  = $empresa->iest;
         $nota->em_IM    = $empresa->im;
@@ -199,5 +199,10 @@ class NotaFiscalService{
     public static function salvarChave($id_nfe,$chave) {
         $dao = new NotaFiscalDao();
         return $dao->salvarChave($id_nfe, $chave);
+    }
+    
+    public static function mudarStatus($id_nfe,$id_status) {
+        $dao = new NotaFiscalDao();
+        return $dao->mudarStatus($id_nfe, $id_status);
     }
 }

@@ -30,5 +30,9 @@ class NotaFiscalDao extends Model {
         return $this->db->query($sql);
     }
    
+     public function mudarStatus($id_nfe, $id_status){
+        $sql = "UPDATE nfe SET id_status=$id_status WHERE id_nfe = $id_nfe";
+        return $this->db->query($sql);
+    }
 
 }

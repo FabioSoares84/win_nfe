@@ -25,9 +25,7 @@ function validaEmail($email){
         return false;
  }
  
-
- 
- function validaCPF($cpf){     
+function validaCPF($cpf){     
      // Extrai somente os números
      $cpf = preg_replace('/[^0-9]/is', '', $cpf);
      
@@ -55,7 +53,7 @@ function validaEmail($email){
      return true;
  }
  
- function validaCNPJ($cnpj) {
+function validaCNPJ($cnpj) {
      $cnpj = preg_replace('/[^0-9]/', '', (string) $cnpj);
      
      // Valida tamanho
@@ -87,10 +85,8 @@ function validaEmail($email){
                  
                  return $cnpj[13] == ($resto < 2 ? 0 : 11 - $resto);
  }
- 
- 
- ///
- function upload($arq, $config_upload){
+
+function upload($arq, $config_upload){
      set_time_limit(0);
      $nome_arquivo 		 = $_FILES[$arq]["name"];
      $tamanho_arquivo 	 = $_FILES[$arq]["size"];
