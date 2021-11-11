@@ -18,7 +18,6 @@ class NotaFiscalDao extends Model {
         $sql = "SELECT * FROM nfe n, nfe_emitente e WHERE n.id_nfe and id_status = 1";
         return $this->select($this->db, $sql, false);
     }
-   
     
     public function getNotaFiscal($id_nfe){
         $sql = "SELECT * FROM nfe WHERE id_nfe = $id_nfe";
@@ -29,8 +28,13 @@ class NotaFiscalDao extends Model {
         $sql = "UPDATE nfe SET chave='$chave', id_status=2 WHERE id_nfe = $id_nfe";
         return $this->db->query($sql);
     }
+    
+    public function salvarRecibo($id_nfe, $recibo){
+       $sql = "UPDATE nfe SET recibo='$recibo', id_status=5 WHERE id_nfe = $id_nfe";
+       return $this->db->query($sql);
+    }
    
-     public function mudarStatus($id_nfe, $id_status){
+    public function mudarStatus($id_nfe, $id_status){
         $sql = "UPDATE nfe SET id_status=$id_status WHERE id_nfe = $id_nfe";
         return $this->db->query($sql);
     }

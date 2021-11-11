@@ -4,6 +4,7 @@ namespace app\models\service;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
+use NFePHP\NFe\Common\Standardize;
 use Exception;
 use app\models\service\NotaFiscalService;
 use app\models\service\XmlService;
@@ -126,6 +127,67 @@ class NfeService{
 //        $tools->model('55');
     }
     
+    public static function enviarXml($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        $retorno = new \stdClass();
+        try {
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+          
+            $idLote = str_pad($notafiscal->nfe->nNF, 15, '0', STR_PAD_LEFT);
+            
+            //Lendo arquivo xml a ser enviado
+            $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
+            $xml = file_get_contents("Notas/{$pastaAmbiente}/assinadas/{$notafiscal->nfe->chave}-nfe.xml");
+            
+            //envia o xml para pedir autorização ao SEFAZ
+            $resp = $tools->sefazEnviaLote([$xml], $idLote);
+            
+            //transforma o xml de retorno em um stdClass
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            if ($std->cStat != 103) {
+                //erro registrar e voltar
+                $retorno->erro = 1;
+                $retorno->msg = "Erro não foi possivel enviar XML";
+                $retorno->msg_erro = $std->xMotivo;
+                i($retorno);
+            }
+            $recibo = $std->infRec->nRec;
+            
+            NotaFiscalService::salvarRecebido($notafiscal->nfe->id_nfe,$recibo);
+            $retorno->erro = -1;
+            $retorno->msg = "XML Salvo recebimento com sucesso";
+            $retorno->msg_erro = ""; 
+            
+            //esse recibo deve ser guardado para a proxima operação que é a consulta do recibo
+            //header('Content-type: text/xml; charset=UTF-8');
+            //echo $resp;
+        } catch (\Exception $e) {
+             $retorno->erro = -1;
+            $retorno->msg = "Erro ao salvar recebimento";
+            $retorno->msg_erro = $e->getMessage(); 
+        }
+        return $retorno;
+    }
     public static function identifica($nfe,$identificacao){
         $std = new \stdClass();
         $std->cUF       = $identificacao->cUF;      //codigo numerico do estado

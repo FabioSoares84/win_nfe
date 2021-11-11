@@ -50,9 +50,11 @@
                                     <td align="center"><?php echo $nota->dest_xNome ?></td>
                                     <td align="center"><?php echo $nota->chave ?></td>
                                     <td align="center">
-                                        <a href="<?php echo URL_BASE . "nfe/gerarNfe/" .$nota->id_nfe ?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Gerar NFE</a>
-                                        <a href="<?php echo URL_BASE . "nfe/edit/" .$emitente->id_emitente ?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Editar</a>
-                                        <a href="<?php echo URL_BASE . "nfe/excluir/" .$emitente->id_emitente ?>" class="d-inline-block btn btn-outline-vermelho btn-pequeno"><i class="fas fa-trash-alt"></i> Excluir</a>
+                                        <a href="<?php echo URL_BASE."nfe/gerarNfe/"  .$nota->id_nfe?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Gerar NFE</a>
+                                        <a href="<?php echo URL_BASE."nfe/assinarNfe/".$nota->id_nfe?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Assinar NFE</a>
+                                        <a href="<?php echo URL_BASE."nfe/enviarNfe/" .$nota->id_nfe?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Enviar NFE</a>
+                                        <a href="<?php echo URL_BASE."nfe/edit/"      .$nota->id_nfe?>" class="d-inline-block btn btn-outline-verde btn-pequeno"><i class="fas fa-edit"></i> Editar</a>
+                                        <a href="<?php echo URL_BASE."nfe/excluir/"   .$nota->id_nfe?>" class="d-inline-block btn btn-outline-vermelho btn-pequeno"><i class="fas fa-trash-alt"></i> Excluir</a>
                                     </td>
                                 </tr>                    
                             <?php } ?>	             
