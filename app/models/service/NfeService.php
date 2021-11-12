@@ -188,6 +188,126 @@ class NfeService{
         }
         return $retorno;
     }
+   
+    
+    public static function autorizaXml($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        $retorno = new \stdClass();
+        try {
+            //leitura do certificado digital
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+          
+
+            //consulta número de recibo
+            //$numeroRecibo = número do recíbo do envio do lote
+            $xmlResp = $tools->sefazConsultaRecibo($notafiscal->nfe->recibo, intVal($notafiscal->nfe->tpAmb));
+
+            //transforma o xml de retorno em um stdClass
+            $st = new Standardize();
+            $std = $st->toStd($xmlResp);
+
+            if ($std->cStat=='103') { //lote enviado
+                //Lote ainda não foi precessado pela SEFAZ;
+                $retorno->erro = 1;
+                $retorno->msg = "Não foi possivel fazer a consulta";
+                $retorno->msg_erro = "O lote ainda esta sendo processado"; 
+                return $retorno;
+            }
+            if ($std->cStat=='105') { //lote em processamento
+                //tente novamente mais tarde
+                $retorno->erro = 1;
+                $retorno->msg = "Não foi possivel fazer a consulta";
+                $retorno->msg_erro = "Lote em processamento, tente mais tarde"; 
+                return $retorno;
+            }
+
+            if ($std->cStat=='104') { //lote processado (tudo ok)
+                if ($std->protNFe->infProt->cStat=='100') { //Autorizado o uso da NF-e
+                    $protocolo = $std->protNFe->infProt->nProt;
+                    
+                    
+                     //Lendo arquivo xml a ser assinado
+                    $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
+                    $xml_assinado = file_get_contents("Notas/{$pastaAmbiente}/assinadas/{$notafiscal->nfe->chave}-nfe.xml");
+            
+                    
+                    $xml_autorizado = \NFePHP\NFe\Complements::toAuthorize($xml_assinado, $xmlResp);
+                    
+                    //Tranportar o arquivo autorizada para a pasta autorizada
+                    $path_autorizado = "Notas/{$pastaAmbiente}/autorizadas/{$notafiscal->nfe->chave}-nfe.xml";
+                    file_put_contents($path_autorizado, $xml_autorizado);
+                    chmod($path_autorizado, 0777);
+                    
+                    //Salvar na tabela nfe o protrocolo
+                    NotaFiscalService::salvarProtocolo($notafiscal->nfe->id_nfe,$protocolo);
+                    $retorno->erro = -1;
+                    $retorno->msg = "XML Autorizado com sucesso";
+                    $retorno->msg_erro = "";
+                    
+                    return $retorno;
+                    
+               
+                } elseif (in_array($std->protNFe->infProt->cStat,["110", "301", "302"])) { //DENEGADAS
+//                    $return = ["situacao"=>"denegada",
+//                               "numeroProtocolo"=>$std->protNFe->infProt->nProt,
+//                               "motivo"=>$std->protNFe->infProt->xMotivo,
+//                               "cstat"=>$std->protNFe->infProt->cStat,
+//                               "xmlProtocolo"=>$xmlResp];
+                    
+                               $retorno->erro = 1;
+                               $retorno->msg = "Denegado";
+                               $retorno->msg_erro = $std->cStat.":".$std->xMotivo ;  
+                               return $retorno;
+                               
+                } else { //não autorizada (rejeição)
+//                    $return = ["situacao"=>"rejeitada",
+//                               "motivo"=>$std->protNFe->infProt->xMotivo,
+//                               "cstat"=>$std->protNFe->infProt->cStat];
+                               
+                                $retorno->erro = 1;
+                                $retorno->msg = "Rejeitada";
+                                 $retorno->msg_erro = $std->cStat.":".$std->xMotivo ;  
+                                return $retorno;
+                }
+            } else { //outros erros possíveis
+//                $return = ["situacao"=>"rejeitada",
+//                           "motivo"=>$std->xMotivo,
+//                           "cstat"=>$std->cStat];
+                           
+                            $retorno->erro = 1;
+                            $retorno->msg = "Rejeitada";
+                            $retorno->msg_erro = $std->cStat.":".$std->xMotivo ; 
+                            return $retorno;
+            }
+
+        } catch (\Exception $e) {
+            $retorno->erro = 1;
+            $retorno->msg = "Erro ao Consultar";
+            $retorno->msg_erro = $e->getMessage(); 
+        }
+        return $retorno;
+    }
+    
+    
     public static function identifica($nfe,$identificacao){
         $std = new \stdClass();
         $std->cUF       = $identificacao->cUF;      //codigo numerico do estado

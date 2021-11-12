@@ -39,10 +39,10 @@ class ClienteController extends Controller{
         $cliente->id_cliente          = ($_POST["id_cliente"]) ? $_POST["id_cliente"] : null ; 
         $cliente->nome                = $_POST["nome"];   
         $cliente->nome_fantasia       = $_POST["nome_fantasia"];  
-        $cliente->cpf                 = $_POST["cnpj"];           
-        $cliente->cnpj                = $_POST["ie"];   
+        $cliente->cpf                 = $_POST["cpf"];           
+        $cliente->cnpj                = tira_mascara($_POST["cnpj"]);   
         $cliente->fone                = $_POST["fone"];  
-        $cliente->celular             = $_POST["fone"];  
+        $cliente->celular             = $_POST["celular"];  
         $cliente->email               = $_POST["email"];
         
         $cliente->cep                 = $_POST["cep"];        //CEP
@@ -53,13 +53,13 @@ class ClienteController extends Controller{
         $cliente->uf                  = $_POST["uf"];
         $cliente->cidade              = $_POST["cidade"];
         
-        $cliente->ie                = $_POST["ie"];           
+        $cliente->ie                  = $_POST["ie"];           
         $cliente->im                  = $_POST["im"];             
-        $cliente->rg                = $_POST["rg"];           
+        $cliente->rg                  = $_POST["rg"];           
       
-        $cliente->suframa           = $_POST["suframa"];
-        $cliente->ie_subt_trib      = $_POST["ie_subt_trib"];
-        $cliente->ibge                  = $_POST["ibge"];
+        $cliente->suframa             = $_POST["suframa"];
+        $cliente->ie_subt_trib        = $_POST["ie_subt_trib"];
+        $cliente->ibge                = $_POST["ibge"];
         
         $cliente->data_cadastro  = date("Y-m-d");
 

@@ -206,6 +206,11 @@ class NotaFiscalService{
         return $dao->salvarRecibo($id_nfe, $recibo);
     }
     
+     public static function salvarProtocolo($id_nfe,$protocolo) {
+        $dao = new NotaFiscalDao();
+        return $dao->salvarProtocolo($id_nfe, $protocolo);
+    }
+    
     public static function mudarStatus($id_nfe,$id_status) {
         $dao = new NotaFiscalDao();
         return $dao->mudarStatus($id_nfe, $id_status);

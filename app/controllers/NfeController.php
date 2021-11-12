@@ -25,8 +25,10 @@ class NfeController extends Controller{
         i($xml);
     }
     
-    public function autorizarXml($id_nfe){
-       echo "autorizarXml"; 
+    public function autorizarNfe($id_nfe){
+        $notafiscal = NotaFiscalService::getNotaFiscal($id_nfe);     
+        $xml = NfeService::autorizaXml($notafiscal);
+        i($xml);
     }
     
     public function gerarDanfe($id_nfe){

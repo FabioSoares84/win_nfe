@@ -33,6 +33,11 @@ class NotaFiscalDao extends Model {
        $sql = "UPDATE nfe SET recibo='$recibo', id_status=5 WHERE id_nfe = $id_nfe";
        return $this->db->query($sql);
     }
+    
+    public function salvarProtocolo($id_nfe, $protocolo){
+       $sql = "UPDATE nfe SET protocolo='$protocolo', id_status=5 WHERE id_nfe = $id_nfe";
+       return $this->db->query($sql);
+    }
    
     public function mudarStatus($id_nfe, $id_status){
         $sql = "UPDATE nfe SET id_status=$id_status WHERE id_nfe = $id_nfe";
