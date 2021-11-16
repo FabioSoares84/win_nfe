@@ -48,7 +48,7 @@ class NotaFiscalService{
         $nota->tpAmb = $configuracao->nfe_ambiente; //1=Produção; 2=Homologação
         $nota->finNFe = 1;
         $nota->indFinal = $configuracao->indFinal;
-        $nota->indPres = 2;    //Indica presença do comprador
+        $nota->indPres = 1;    //0= não se aplica(nf comlementar ou ajuste) 1=Operação presencial 2=Operação não presencial, pela internet
         $nota->indIntermed = 0; //usar a partir de 05/04/2021    
         $nota->procEmi = 0;
         $nota->verProc = '1.0.0';

@@ -30,7 +30,7 @@ class NotaFiscalDao extends Model {
     }
     
     public function salvarRecibo($id_nfe, $recibo){
-       $sql = "UPDATE nfe SET recibo='$recibo', id_status=5 WHERE id_nfe = $id_nfe";
+       $sql = "UPDATE nfe SET recibo='$recibo',id_status=5 WHERE id_nfe = $id_nfe";
        return $this->db->query($sql);
     }
     

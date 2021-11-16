@@ -1,6 +1,6 @@
 <?php
 define("SERVIDOR", "localhost");
-define("BANCO", "win_nota");
+define("BANCO", "win_nfe");
 define("USUARIO", "root");
 define("SENHA", "");
 define("CHARSET","UTF8");

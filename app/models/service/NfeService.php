@@ -41,6 +41,19 @@ class NfeService{
         
         self::fatura($nfe, $notafiscal->nfe);
         self::pagamento($nfe,$notafiscal->nfe);
+        
+        //referente ao Responsável Técnico NT 2018.005
+        $std = new \stdClass();
+        $std->CNPJ = '27288061000152'; //CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
+        $std->xContato= 'Fabio Pereira Soares'; //Nome da pessoa a ser contatada
+        $std->email = 'faio@wssoft.com.br'; //E-mail da pessoa jurídica a ser contatada
+        $std->fone = '67992230567'; //Telefone da pessoa jurídica/física a ser contatada
+        $std->CSRT = 'G8063VRTNDMO886SFNK5LDUDEI24XJ22YIPO'; //Código de Segurança do Responsável Técnico
+        $std->idCSRT = '01'; //Identificador do CSRT
+
+        $nfe->taginfRespTec($std);
+        
+        
         $retorno = new \stdClass();
         try {
             $result = $nfe->montaNFe();
@@ -189,7 +202,6 @@ class NfeService{
         return $retorno;
     }
    
-    
     public static function autorizaXml($notafiscal){
         $arr = [
         "atualizacao" => "2021-07-08 09:11:21",
@@ -275,7 +287,7 @@ class NfeService{
                     
                                $retorno->erro = 1;
                                $retorno->msg = "Denegado";
-                               $retorno->msg_erro = $std->cStat.":".$std->xMotivo ;  
+                               $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
                                return $retorno;
                                
                 } else { //não autorizada (rejeição)
@@ -285,7 +297,7 @@ class NfeService{
                                
                                 $retorno->erro = 1;
                                 $retorno->msg = "Rejeitada";
-                                 $retorno->msg_erro = $std->cStat.":".$std->xMotivo ;  
+                                $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
                                 return $retorno;
                 }
             } else { //outros erros possíveis
@@ -295,7 +307,7 @@ class NfeService{
                            
                             $retorno->erro = 1;
                             $retorno->msg = "Rejeitada";
-                            $retorno->msg_erro = $std->cStat.":".$std->xMotivo ; 
+                            $retorno->msg_erro = $std->cStat.":".$std->xMotivo; 
                             return $retorno;
             }
 
