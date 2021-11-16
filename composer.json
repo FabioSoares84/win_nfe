@@ -6,6 +6,8 @@
     },
     "require" : {
         "phpmailer/phpmailer" : "6.0",
-        "nfephp-org/sped-nfe" : "^5.0"
+        "nfephp-org/sped-nfe" : "^5.0",
+        "nfephp-org/sped-da": "^1.0",
+        "nfephp-org/sped-da" : "^1.0"
     }
 }

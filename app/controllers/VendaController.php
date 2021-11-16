@@ -6,6 +6,7 @@ use app\models\service\Service;
 use app\models\service\VendaService;
 use app\models\service\ItemVendaService;
 use app\models\service\ProdutoService;
+use app\models\service\NotaFiscalService;
 
 class VendaController extends Controller{
    private $tabela = "venda";
@@ -61,7 +62,8 @@ class VendaController extends Controller{
      public function finalizar($id_venda){
         $total = Service::getSoma("item_venda","subtotal","id_venda", $id_venda);
         Service::editar(["finalizada"=>"S", "id_venda"=>$id_venda, "total"=>$total],"id_venda", $this->tabela);
-        $this->redirect(URL_BASE."venda"); 
+        NotaFiscalService::salvarNota($id_venda);
+        $this->redirect(URL_BASE."notafiscal"); 
     }
     
     

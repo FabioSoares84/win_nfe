@@ -20,6 +20,7 @@ class ComposerStaticInit30b75ec5b117e149411766318a3f6993
         array (
             'NFePHP\\NFe\\' => 11,
             'NFePHP\\Gtin\\' => 12,
+            'NFePHP\\DA\\' => 10,
             'NFePHP\\Common\\' => 14,
         ),
         'L' => 
@@ -30,6 +31,11 @@ class ComposerStaticInit30b75ec5b117e149411766318a3f6993
         'J' => 
         array (
             'JsonSchema\\' => 11,
+        ),
+        'C' => 
+        array (
+            'Com\\Tecnick\\Color\\' => 18,
+            'Com\\Tecnick\\Barcode\\' => 20,
         ),
     );
 
@@ -54,6 +60,10 @@ class ComposerStaticInit30b75ec5b117e149411766318a3f6993
         array (
             0 => __DIR__ . '/..' . '/nfephp-org/sped-gtin/src',
         ),
+        'NFePHP\\DA\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nfephp-org/sped-da/src',
+        ),
         'NFePHP\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/nfephp-org/sped-common/src',
@@ -70,6 +80,14 @@ class ComposerStaticInit30b75ec5b117e149411766318a3f6993
         array (
             0 => __DIR__ . '/..' . '/justinrainbow/json-schema/src/JsonSchema',
         ),
+        'Com\\Tecnick\\Color\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-color/src',
+        ),
+        'Com\\Tecnick\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-barcode/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -82,12 +100,17 @@ class ComposerStaticInit30b75ec5b117e149411766318a3f6993
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit30b75ec5b117e149411766318a3f6993::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit30b75ec5b117e149411766318a3f6993::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit30b75ec5b117e149411766318a3f6993::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit30b75ec5b117e149411766318a3f6993::$classMap;
 
         }, null, ClassLoader::class);
     }

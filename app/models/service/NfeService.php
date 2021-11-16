@@ -8,6 +8,8 @@ use NFePHP\NFe\Common\Standardize;
 use Exception;
 use app\models\service\NotaFiscalService;
 use app\models\service\XmlService;
+use NFePHP\DA\NFe\Danfe;
+use NFePHP\NFe\Complements;
 
 class NfeService{
 
@@ -68,11 +70,11 @@ class NfeService{
                chmod($path, 0777); //Permissão de escrita
                NotaFiscalService::salvarChave($notafiscal->nfe->id_nfe, $chave);
                XmlService::salvar($notafiscal->nfe->id_nfe, $xml);
-               $retorno->erro = -1;
+               $retorno->erro = 1;
                $retorno->msg = "XML gerado com sucesso";
                $retorno->msg_erro = ""; 
             }else{
-               $retorno->erro = 1;
+               $retorno->erro = -1;
                $retorno->msg = "Não foi Possível Gerar XML";
                $retorno->msg_erro = $nfe->getErrors(); 
             }
@@ -120,24 +122,12 @@ class NfeService{
             $retorno->erro = -1;
             $retorno->msg = "XML Assinado com sucesso";
             $retorno->msg_erro = ""; 
-           
-//            i($response);
-//            } catch (\Exception $e) {
-//            //aqui você trata possiveis exceptions
-//            echo "Foram encontrados erros na nota, procure o administrador";
-//            i($e->getMessage()) ;
         } catch (\Exception $e){
             $retorno->erro = 1;
             $retorno->msg = "Erro ao Assinar XML";
             $retorno->msg_erro = $e->getMessage(); 
-            // i($e->getMessage());
         } 
         return $retorno;
-//        i($configJson);
-//        $pfxcontent = file_get_contents('fixtures/expired_certificate.pfx');
-//
-//        $tools = new Tools($configJson, Certificate::readPfx($pfxcontent, 'associacao'));
-//        $tools->model('55');
     }
     
     public static function enviarXml($notafiscal){
@@ -182,20 +172,15 @@ class NfeService{
                 $retorno->erro = 1;
                 $retorno->msg = "Erro não foi possivel enviar XML";
                 $retorno->msg_erro = $std->xMotivo;
-                i($retorno);
+                return $retorno;
             }
             $recibo = $std->infRec->nRec;
-            
             NotaFiscalService::salvarRecebido($notafiscal->nfe->id_nfe,$recibo);
             $retorno->erro = -1;
-            $retorno->msg = "XML Salvo recebimento com sucesso";
+            $retorno->msg = "XML enviado com sucesso";
             $retorno->msg_erro = ""; 
-            
-            //esse recibo deve ser guardado para a proxima operação que é a consulta do recibo
-            //header('Content-type: text/xml; charset=UTF-8');
-            //echo $resp;
         } catch (\Exception $e) {
-             $retorno->erro = -1;
+            $retorno->erro = 1;
             $retorno->msg = "Erro ao salvar recebimento";
             $retorno->msg_erro = $e->getMessage(); 
         }
@@ -227,8 +212,6 @@ class NfeService{
             $configJson = json_encode($arr);
             $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
             $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
-          
-
             //consulta número de recibo
             //$numeroRecibo = número do recíbo do envio do lote
             $xmlResp = $tools->sefazConsultaRecibo($notafiscal->nfe->recibo, intVal($notafiscal->nfe->tpAmb));
@@ -255,14 +238,11 @@ class NfeService{
             if ($std->cStat=='104') { //lote processado (tudo ok)
                 if ($std->protNFe->infProt->cStat=='100') { //Autorizado o uso da NF-e
                     $protocolo = $std->protNFe->infProt->nProt;
-                    
-                    
                      //Lendo arquivo xml a ser assinado
                     $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
                     $xml_assinado = file_get_contents("Notas/{$pastaAmbiente}/assinadas/{$notafiscal->nfe->chave}-nfe.xml");
-            
                     
-                    $xml_autorizado = \NFePHP\NFe\Complements::toAuthorize($xml_assinado, $xmlResp);
+                    $xml_autorizado = Complements::toAuthorize($xml_assinado, $xmlResp);
                     
                     //Tranportar o arquivo autorizada para a pasta autorizada
                     $path_autorizado = "Notas/{$pastaAmbiente}/autorizadas/{$notafiscal->nfe->chave}-nfe.xml";
@@ -274,43 +254,26 @@ class NfeService{
                     $retorno->erro = -1;
                     $retorno->msg = "XML Autorizado com sucesso";
                     $retorno->msg_erro = "";
-                    
                     return $retorno;
                     
-               
                 } elseif (in_array($std->protNFe->infProt->cStat,["110", "301", "302"])) { //DENEGADAS
-//                    $return = ["situacao"=>"denegada",
-//                               "numeroProtocolo"=>$std->protNFe->infProt->nProt,
-//                               "motivo"=>$std->protNFe->infProt->xMotivo,
-//                               "cstat"=>$std->protNFe->infProt->cStat,
-//                               "xmlProtocolo"=>$xmlResp];
-                    
-                               $retorno->erro = 1;
-                               $retorno->msg = "Denegado";
-                               $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
-                               return $retorno;
+                   $retorno->erro = 1;
+                   $retorno->msg = "Denegado";
+                   $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
+                   return $retorno;
                                
-                } else { //não autorizada (rejeição)
-//                    $return = ["situacao"=>"rejeitada",
-//                               "motivo"=>$std->protNFe->infProt->xMotivo,
-//                               "cstat"=>$std->protNFe->infProt->cStat];
-                               
-                                $retorno->erro = 1;
-                                $retorno->msg = "Rejeitada";
-                                $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
-                                return $retorno;
+                } else { 
+                    $retorno->erro = 1;
+                    $retorno->msg = "Rejeitada";
+                    $retorno->msg_erro = $std->protNFe->infProt->cStat.":".$std->protNFe->infProt->xMotivo;   
+                    return $retorno;
                 }
-            } else { //outros erros possíveis
-//                $return = ["situacao"=>"rejeitada",
-//                           "motivo"=>$std->xMotivo,
-//                           "cstat"=>$std->cStat];
-                           
-                            $retorno->erro = 1;
-                            $retorno->msg = "Rejeitada";
-                            $retorno->msg_erro = $std->cStat.":".$std->xMotivo; 
-                            return $retorno;
+            } else { 
+                $retorno->erro = 1;
+                $retorno->msg = "Rejeitada";
+                $retorno->msg_erro = $std->cStat.":".$std->xMotivo; 
+                return $retorno;
             }
-
         } catch (\Exception $e) {
             $retorno->erro = 1;
             $retorno->msg = "Erro ao Consultar";
@@ -319,6 +282,250 @@ class NfeService{
         return $retorno;
     }
     
+    public static function cancelarNfe($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        
+        $retorno = new \stdClass();
+        try {
+
+//            $certificate = Certificate::readPfx($content, 'senha');
+//            $tools = new Tools($configJson, $certificate);
+//            $tools->model('55');
+
+            $chave = $notafiscal->nfe->chave;
+            $xJust = 'nota emitida em homologação Teste cancelamento';
+            $nProt = $notafiscal->nfe->protocolo;
+            
+            //Ler Certificado
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+            
+            
+            
+             //Lendo arquivo xml a ser enviado
+            $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
+            
+            
+            $response = $tools->sefazCancela($chave, $xJust, $nProt);
+
+            
+            $stdCl = new Standardize($response);
+            //nesse caso $std irá conter uma representação em stdClass do XML
+            $std = $stdCl->toStd();
+       
+            
+
+            //verifique se o evento foi processado
+            if ($std->cStat != 128) {
+                $retorno->erro = 1;
+                $retorno->msg = "Erro ao Cancelar NFe: ". $std->xMotivo;
+                $retorno->msg_erro = $std->cStat . ": ". $std->xMotivo; 
+                return $retorno;
+                
+                
+                
+                
+            } else {
+                $cStat = $std->retEvento->infEvento->cStat;
+                if ($cStat == '101' || $cStat == '135' || $cStat == '155') {
+                    //SUCESSO PROTOCOLAR A SOLICITAÇÂO ANTES DE GUARDAR
+                    $xml_cancelado = Complements::toAuthorize($tools->lastRequest, $response);
+                    
+                    
+                    //Tranportar o arquivo para pasta cancelada
+                    $path_cancelado = "Notas/{$pastaAmbiente}/canceladas/{$notafiscal->nfe->chave}-nfe.xml";
+                    file_put_contents($path_cancelado, $xml_cancelado);
+                    chmod($path_cancelado, 0777);
+                    
+                    
+                    //Ler o Arquivo XML a ser enviado
+                    $arquivo_aprovado = file_get_contents("Notas/{$pastaAmbiente}/autorizadas/{$notafiscal->nfe->chave}-nfe.xml");
+                    
+                    $arquivo_aprovado_sem = file_get_contents("Notas/{$pastaAmbiente}/autorizadas/{$notafiscal->nfe->chave}-nfe.xml");
+                    
+                    $xml_cancelamento = Complements::cancelRegister($arquivo_aprovado, $xml_cancelado);
+                    
+                    file_put_contents($arquivo_aprovado_sem, $xml_cancelado);
+                    chmod($arquivo_aprovado_sem, 0777);
+                    
+                    
+                    $retorno->erro = -1;
+                    $retorno->msg = "NFe Cancelada com Sucesso ". $std->xMotivo;
+                    $retorno->msg_erro = ""; 
+                    return $retorno;
+                    //grave o XML protocolado 
+                } else {
+                    //houve alguma falha no evento 
+                    //TRATAR
+                }
+            }    
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        
+        
+        
+        
+    }
+    
+    public static function consultarNfe($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        
+        $retorno = new \stdClass();
+        try {
+            //Ler Certificado
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+            
+            
+            $tools->model('55');
+
+            $chave = $notafiscal->nfe->chave;
+            $response = $tools->sefazConsultaChave($chave);
+
+            //você pode padronizar os dados de retorno atraves da classe abaixo
+            //de forma a facilitar a extração dos dados do XML
+            //NOTA: mas lembre-se que esse XML muitas vezes será necessário, 
+            //      quando houver a necessidade de protocolos
+            $stdCl = new Standardize($response);
+            //nesse caso $std irá conter uma representação em stdClass do XML
+            $std = $stdCl->toStd();
+       
+            
+            
+            i($std);
+            
+
+       
+                
+                
+           
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        
+        
+        
+        
+    }
+    
+    
+    public static function inuttilizarNfe($notafiscal){
+        $arr = [
+        "atualizacao" => "2021-07-08 09:11:21",
+        "tpAmb" => intval($notafiscal->nfe->tpAmb), //intval para pegar valor inteiro
+        "razaosocial" => $notafiscal->nfe->em_xNome,
+        "cnpj" => $notafiscal->nfe->em_CNPJ,
+        "siglaUF" => "MS",
+        "schemes" => "PL_009_V4",
+        "versao" => '4.00',
+        "tokenIBPT" => "",
+        "CSC" => "",
+        "CSCid" => "",
+        "proxyConf" => [
+            "proxyIp" => "",
+            "proxyPort" => "",
+            "proxyUser" => "",
+            "proxyPass" => ""
+            ]   
+        ];
+        $retorno = new \stdClass();
+        try {
+
+             //Ler Certificado
+            $configJson = json_encode($arr);
+            $certificado_digital = file_get_contents("Notas/certificados/".$notafiscal->configuracao->certificado_digital); //pega certificado digital
+            $tools = new Tools($configJson, Certificate::readPfx($certificado_digital, $notafiscal->configuracao->senha_certificado));
+        
+      
+
+            $nSerie = $notafiscal->nfe->serie;
+            $nIni = '50';
+            $nFin = '55';
+            $xJust = 'Erro de digitação dos números sequencias das notas';
+                    
+            $response = $tools->sefazInutiliza($nSerie, $nIni, $nFin, $xJust);
+
+            $stdCl = new Standardize($response);
+            //nesse caso $std irá conter uma representação em stdClass do XML
+            $std = $stdCl->toStd();
+     
+            i($std);
+            
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        
+    }
+    
+    public static function danfe($notafiscal){
+        //$xml = file_get_contents(__DIR__ . '/fixtures/mod55-nfe_3.xml');
+        //$logo = 'data://text/plain;base64,'. base64_encode(file_get_contents(realpath(__DIR__ . '/../images/tulipas.png')));
+        //$logo = realpath(__DIR__ . '/../images/tulipas.png');
+
+        try {
+            
+            //Lendo arquivo xml a ser assinado
+            $pastaAmbiente = ($notafiscal->nfe->tpAmb=="1") ? "producao" : "homologacao";
+            $xml_autorizado = file_get_contents("Notas/{$pastaAmbiente}/autorizadas/{$notafiscal->nfe->chave}-nfe.xml");
+
+            $danfe = new Danfe($xml_autorizado);
+            $danfe->debugMode(false);
+            $danfe->creditsIntegratorFooter('WEBNFe Sistemas - http://www.webenf.com.br');
+            $danfe->obsContShow(false);
+            $danfe->epec('891180004131899', '14/08/2018 11:24:45'); //marca como autorizada por EPEC
+            // Caso queira mudar a configuracao padrao de impressao
+            /*  $this->printParameters( $orientacao = '', $papel = 'A4', $margSup = 2, $margEsq = 2 ); */
+            // Caso queira sempre ocultar a unidade tributável
+            /*  $this->setOcultarUnidadeTributavel(true); */
+            //Informe o numero DPEC
+            /*  $danfe->depecNumber('123456789'); */
+            //Configura a posicao da logo
+            /*  $danfe->logoParameters($logo, 'C', false);  */
+            //Gera o PDF
+            $pdf = $danfe->render();
+            header('Content-Type: application/pdf');
+            echo $pdf;
+        } catch (InvalidArgumentException $e) {
+            echo "Ocorreu um erro durante o processamento :" . $e->getMessage();
+        }    
+    }
     
     public static function identifica($nfe,$identificacao){
         $std = new \stdClass();
@@ -456,9 +663,9 @@ class NfeService{
         $std->vOrig = $notafiscal->vOrig;
         $std->vDesc = $notafiscal->vDesc;
         $std->vLiq  = $notafiscal->vLiq;
-
         $nfe->tagfat($std);
     }
+    
     
     public static function pagamento($nfe, $notafiscal){
         $std            = new \stdClass();
