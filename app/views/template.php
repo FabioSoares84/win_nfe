@@ -10,7 +10,8 @@
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/js/datatables/css/style_dataTable.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/auxiliar.css">
         <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/grade.css">
-        <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/style.css">	
+        <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/style.css">
+        <link rel="stylesheet" href="<?php echo URL_BASE ?>assets/css/estilo-upload.css">
 
         <script src="<?php echo URL_BASE ?>assets/js/jquery.min.js"></script>	
         <script>

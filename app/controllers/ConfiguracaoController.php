@@ -13,15 +13,13 @@ class ConfiguracaoController extends Controller{
    
     public function index(){
        $dados["lista"] = ProdutoService::lista();
-       $dados["view"]  = "Produto/Index";
+       $dados["view"]  = "Configuracao/Index";
        $this->load("template", $dados);
     }
     
     public function create(){
-        $dados["cfops"]    = Service::lista("cfop");  
-        $dados["unidades"] = Service::lista("unidade");
-        $dados["tributacoes"] = Service::lista("tributacao");
-        $dados["view"]     = "Produto/Create";
+        $dados["tributacoes"] = Flash::getForm();
+        $dados["view"]     = "Configuracao/Create";
         $this->load("template", $dados);
     }
     

@@ -1,0 +1,16 @@
+.UploadProgress{max-width:100%;width:600px;margin:0 auto;border:solid 1px #ddd;border-radius:5px;padding:15px;}
+.UploadProgress input[type="file"]{	width:100%;border:solid 1px #ddd; padding:10px;border-radius:3px;background:#fff}
+.UploadProgress span{font-size:.9rem; text-transform:uppercase;display:block;padding-bottom:8px;}
+.UploadProgress label{display:block;cursor:pointer}
+.d-flex{display:block}
+.progress { display: -ms-flexbox;  display: flex;  height: 20px;  overflow: hidden;  font-size: .75rem;  background-color: #e9ecef;    border-radius: .25rem;    margin-top: 10px;}
+.progress-bar { display: -ms-flexbox;  display: flex;  -ms-flex-direction: column;  flex-direction: column;  -ms-flex-pack: center;  justify-content: center;  overflow: hidden;   color: #fff;   text-align: center;  white-space: nowrap;  background-color: #28a745;  transition: width .6s ease;  font-size: 16px; text-align: center;}
+.img-up{}
+.img-up img{max-width:100%;border-radius:5px}
+.cx-up{float:left;}
+.btn-up{margin-top:10px;background: #8ccc42;border-color: #76b131;}
+
+/*upload simples*/
+.simples input[type="file"] { padding: 6px 10px;}
+.simples {background: linear-gradient(0deg, #eef3f5, #e9e9e9);}
+.simple:before{content:""}
