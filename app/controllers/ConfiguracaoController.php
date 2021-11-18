@@ -6,9 +6,9 @@ use app\core\Flash;
 use app\models\service\Service;
 use app\models\service\ProdutoService;
 
-class ProdutoController extends Controller{
-   private $tabela = "produto";
-   private $campo  = "id_produto"; 
+class ConfiguracaoController extends Controller{
+   private $tabela = "configuracao";
+   private $campo  = "id_configuracao"; 
    
    
     public function index(){

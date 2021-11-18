@@ -15,10 +15,11 @@
             <nav class="menuprincipal" id="principal">					
                 <ul class="menu-ul">
                     <li class="bg-menu"><a href=""><i class="icon fas fa-arrow-left"></i> Recolher menu</a></li>
-                    <li><a href="configuracao_nota.html"><i class="icon fas fa-file-invoice-dollar"></i> Configurações de nota</a></li>
+                    <li><a href="<?php echo URL_BASE ."configuracao/create"?>"><i class="icon fas fa-file-invoice-dollar"></i> Configurações de nota</a></li>
                     <li><a href="#menu_empresa"><span>+</span>  Empresa <i class="icon ihome fas fa-truck"></i></a></li>
                     <li><a href="#menu_contato"><span>+</span>  Contato <i class="icon ihome fas fa-user-tag"></i></a></li>
-                    <li><a href="#menu_produto"><span>+</span>  Produto <i class="icon ihome fas fa-cube"></i></a></li>
+                    <!--<li><a href="#menu_produto"><span>+</span>  Produto <i class="icon ihome fas fa-cube"></i></a></li> -->
+                    <li><a href="<?php echo URL_BASE ."produto"?>"><i class="icon fas fa-file-invoice-dollar"></i> Produto</a></li>
                     <li><a href="<?php echo URL_BASE ."venda"?>"><i class="icon fas fa-file-invoice-dollar"></i> Venda</a></li>
                     <li><a href="#menu_tributacao" rel="ativo"><span>+</span>  Tributação <i class="icon ihome fas fa-book"></i></a></li>
                     <li><a href="#menu_notas" rel="ativo"><span>+</span>  Notas <i class="icon ihome fas fa-file-contract"></i></a></li>					
@@ -60,8 +61,8 @@
             <ul class="menu-ul">
                 <li class="bg-menu"><a href=""><i class="icon fas fa-arrow-left"></i> Recolher menu</a></li>
                 <span class="h5 p-1 py-2 text-branco mb-0 d-block text-uppercase"><i class="icon fas fa-book"></i> Tributação</span>
-                <li><a href="lst_tributacao.html"><i class="icon fas fa-list"></i> Lista</a></li>
-                <li><a href="frm_tributacao.html"><i class="icon fas fa-box"></i> cadastro</a></li>
+                <li><a href="<?php echo URL_BASE ."tributacao"?>"><i class="icon fas fa-list"></i> Lista</a></li>
+                <li><a href="<?php echo URL_BASE ."tributacao/create"?>"><i class="icon fas fa-box"></i> cadastro</a></li>
             </ul>
         </nav>
 
